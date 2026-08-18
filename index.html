@@ -30,14 +30,10 @@
   html{ scroll-behavior: smooth; }
 
   body{
-    background: var(--bg);
+    background: #050607;
     color: var(--text);
     font-family: var(--body);
     overflow-x: hidden;
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 48px 48px;
   }
 
   ::selection{ background: var(--line); color: var(--bg); }
@@ -191,12 +187,8 @@
   }
 
   .part path, .part rect, .part polygon, .part circle, .part ellipse{
-    stroke: var(--line);
-    stroke-width: 2;
-    fill: rgba(95, 217, 206, 0.08);
     vector-effect: non-scaling-stroke;
   }
-  .part.cockpit path{ fill: rgba(242, 169, 59, 0.18); stroke: var(--accent); }
 
   .label{
     position: absolute;
@@ -340,53 +332,141 @@
     <div class="stage-sticky">
       <span class="stage-heading" id="stage-heading"><span class="n">00</span> / Diagramma esploso</span>
 
-      <svg class="plane-svg" id="plane-svg" viewBox="0 0 600 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg class="plane-svg" id="plane-svg" viewBox="0 0 600 780" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="gradFuselage" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#7d8a92" />
+            <stop offset="32%" stop-color="#eef3f5" />
+            <stop offset="55%" stop-color="#c7d0d5" />
+            <stop offset="100%" stop-color="#5c666d" />
+          </linearGradient>
+          <linearGradient id="gradWing" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#dbe2e6" />
+            <stop offset="55%" stop-color="#a9b3b9" />
+            <stop offset="100%" stop-color="#616b71" />
+          </linearGradient>
+          <linearGradient id="gradEngine" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#4a5257" />
+            <stop offset="45%" stop-color="#c3cbcf" />
+            <stop offset="100%" stop-color="#33393d" />
+          </linearGradient>
+          <radialGradient id="gradInlet" cx="50%" cy="45%" r="65%">
+            <stop offset="0%" stop-color="#20262a" />
+            <stop offset="70%" stop-color="#0b0d0f" />
+            <stop offset="100%" stop-color="#000000" />
+          </radialGradient>
+          <linearGradient id="gradCockpitGlass" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#8fd7d0" />
+            <stop offset="100%" stop-color="#193640" />
+          </linearGradient>
+          <filter id="dropShadow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.55"/>
+          </filter>
+          <clipPath id="fuselageClip">
+            <path d="M300 58
+                     C 344 58 362 112 362 172
+                     L 362 560
+                     C 362 614 332 646 300 656
+                     C 268 646 238 614 238 560
+                     L 238 172
+                     C 238 112 256 58 300 58 Z" />
+          </clipPath>
+        </defs>
+
+        <!-- LINEE GUIDA: tratteggiate, si disegnano mentre ogni pezzo si separa -->
+        <g class="guides" stroke="#5FD9CE" stroke-width="1.5" stroke-dasharray="1" fill="none" opacity="0.55">
+          <path id="guide-tail" pathLength="1" d="M300 610 L300 720" />
+          <path id="guide-wing-l" pathLength="1" d="M296 420 L140 420" />
+          <path id="guide-wing-r" pathLength="1" d="M304 420 L460 420" />
+          <path id="guide-engine-l" pathLength="1" d="M186 470 L96 540" />
+          <path id="guide-engine-r" pathLength="1" d="M414 470 L504 540" />
+          <path id="guide-cockpit" pathLength="1" d="M300 100 L300 30" />
+        </g>
+
         <g id="plane-group">
 
-          <!-- TAIL: vertical fin + horizontal stabilizers -->
-          <g class="part tail" id="part-tail">
-            <path d="M300 640 L330 700 L300 730 L270 700 Z" />
-            <path d="M300 610 L360 560 L340 690 L300 660 Z" />
-            <path d="M300 610 L240 560 L260 690 L300 660 Z" />
+          <!-- TAIL -->
+          <g class="part tail" id="part-tail" filter="url(#dropShadow)">
+            <path d="M300 630 L332 700 L300 732 L268 700 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
+            <path d="M300 600 L366 548 L344 686 L300 654 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
+            <path d="M300 600 L234 548 L256 686 L300 654 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
+            <path d="M300 630 L322 682 L300 700 L300 630 Z" fill="#EEA83B" opacity="0.9" />
           </g>
 
           <!-- ENGINES -->
-          <g class="part engine" id="part-engine-left">
-            <rect x="150" y="430" width="46" height="110" rx="20" />
-            <ellipse cx="173" cy="435" rx="23" ry="8" />
+          <g class="part engine" id="part-engine-left" filter="url(#dropShadow)">
+            <rect x="146" y="428" width="52" height="116" rx="24" fill="url(#gradEngine)" stroke="#20262a" stroke-width="1.5" />
+            <ellipse cx="172" cy="434" rx="26" ry="9" fill="url(#gradInlet)" />
+            <circle cx="172" cy="434" r="3" fill="#5FD9CE" opacity="0.7" />
+            <rect x="152" y="530" width="40" height="8" rx="4" fill="#20262a" opacity="0.8" />
           </g>
-          <g class="part engine" id="part-engine-right">
-            <rect x="404" y="430" width="46" height="110" rx="20" />
-            <ellipse cx="427" cy="435" rx="23" ry="8" />
+          <g class="part engine" id="part-engine-right" filter="url(#dropShadow)">
+            <rect x="402" y="428" width="52" height="116" rx="24" fill="url(#gradEngine)" stroke="#20262a" stroke-width="1.5" />
+            <ellipse cx="428" cy="434" rx="26" ry="9" fill="url(#gradInlet)" />
+            <circle cx="428" cy="434" r="3" fill="#5FD9CE" opacity="0.7" />
+            <rect x="408" y="530" width="40" height="8" rx="4" fill="#20262a" opacity="0.8" />
           </g>
 
           <!-- WINGS -->
-          <g class="part wing" id="part-wing-left">
-            <path d="M300 400 L90 470 L110 500 L300 460 Z" />
+          <g class="part wing" id="part-wing-left" filter="url(#dropShadow)">
+            <path d="M300 396 L82 468 L104 502 L300 458 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
+            <path d="M300 420 L140 468 L150 480 L300 442 Z" fill="#ffffff" opacity="0.18" />
+            <circle cx="150" cy="466" r="2.5" fill="#EEA83B" />
           </g>
-          <g class="part wing" id="part-wing-right">
-            <path d="M300 400 L510 470 L490 500 L300 460 Z" />
+          <g class="part wing" id="part-wing-right" filter="url(#dropShadow)">
+            <path d="M300 396 L518 468 L496 502 L300 458 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
+            <path d="M300 420 L460 468 L450 480 L300 442 Z" fill="#ffffff" opacity="0.18" />
+            <circle cx="450" cy="466" r="2.5" fill="#EEA83B" />
           </g>
 
           <!-- FUSELAGE -->
-          <g class="part fuselage" id="part-fuselage">
-            <path d="M300 60
-                     C 340 60 356 110 356 170
-                     L 356 560
-                     C 356 610 330 640 300 650
-                     C 270 640 244 610 244 560
-                     L 244 170
-                     C 244 110 260 60 300 60 Z" />
-            <line x1="270" y1="200" x2="330" y2="200" stroke-width="1" opacity="0.5" />
-            <line x1="270" y1="260" x2="330" y2="260" stroke-width="1" opacity="0.5" />
-            <line x1="270" y1="320" x2="330" y2="320" stroke-width="1" opacity="0.5" />
-            <line x1="270" y1="380" x2="330" y2="380" stroke-width="1" opacity="0.5" />
+          <g class="part fuselage" id="part-fuselage" filter="url(#dropShadow)">
+            <path d="M300 58
+                     C 344 58 362 112 362 172
+                     L 362 560
+                     C 362 614 332 646 300 656
+                     C 268 646 238 614 238 560
+                     L 238 172
+                     C 238 112 256 58 300 58 Z"
+                  fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="1.5" />
+
+            <!-- livrea -->
+            <rect x="238" y="470" width="124" height="20" clip-path="url(#fuselageClip)" fill="#EEA83B" />
+            <rect x="238" y="490" width="124" height="4" clip-path="url(#fuselageClip)" fill="#5FD9CE" opacity="0.8" />
+
+            <!-- finestrini cabina -->
+            <g fill="#0c1a22" stroke="#1f2f36" stroke-width="0.6">
+              <rect x="266" y="200" width="14" height="10" rx="4" />
+              <rect x="266" y="222" width="14" height="10" rx="4" />
+              <rect x="266" y="244" width="14" height="10" rx="4" />
+              <rect x="266" y="266" width="14" height="10" rx="4" />
+              <rect x="266" y="288" width="14" height="10" rx="4" />
+              <rect x="266" y="310" width="14" height="10" rx="4" />
+              <rect x="266" y="332" width="14" height="10" rx="4" />
+              <rect x="266" y="354" width="14" height="10" rx="4" />
+              <rect x="266" y="376" width="14" height="10" rx="4" />
+              <rect x="320" y="200" width="14" height="10" rx="4" />
+              <rect x="320" y="222" width="14" height="10" rx="4" />
+              <rect x="320" y="244" width="14" height="10" rx="4" />
+              <rect x="320" y="266" width="14" height="10" rx="4" />
+              <rect x="320" y="288" width="14" height="10" rx="4" />
+              <rect x="320" y="310" width="14" height="10" rx="4" />
+              <rect x="320" y="332" width="14" height="10" rx="4" />
+              <rect x="320" y="354" width="14" height="10" rx="4" />
+              <rect x="320" y="376" width="14" height="10" rx="4" />
+            </g>
+
+            <!-- radome -->
+            <path d="M300 58 C 316 58 328 76 332 98 L 268 98 C 272 76 284 58 300 58 Z" fill="#2b3236" opacity="0.85" />
           </g>
 
           <!-- COCKPIT -->
-          <g class="part cockpit" id="part-cockpit">
-            <path d="M300 60 C 336 60 354 108 354 165 L 246 165 C 246 108 264 60 300 60 Z" />
-            <path d="M300 78 C 322 78 334 112 334 150 L 266 150 C 266 112 278 78 300 78 Z" stroke-width="1.4" opacity="0.7" />
+          <g class="part cockpit" id="part-cockpit" filter="url(#dropShadow)">
+            <path d="M300 96 C 332 96 350 132 352 168 L 248 168 C 250 132 268 96 300 96 Z"
+                  fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="1.5" />
+            <path d="M300 108 C 322 108 336 134 338 158 L 262 158 C 264 134 278 108 300 108 Z"
+                  fill="url(#gradCockpitGlass)" stroke="#0d1c22" stroke-width="1" />
+            <line x1="300" y1="108" x2="300" y2="158" stroke="#0d1c22" stroke-width="1" />
           </g>
 
         </g>
@@ -485,27 +565,41 @@
       }
     });
 
+    // Le linee guida partono "chiuse" (dashoffset 1 = invisibili) e si disegnano
+    // in sincrono con il pezzo a cui appartengono.
+    gsap.set(".guides path", { strokeDashoffset: 1 });
+
     // Fase 1: l'aereo entra e sale verso il centro
     tl.fromTo("#plane-group", { y: 260, opacity: 0.4 }, { y: 0, opacity: 1, duration: 1.1, ease: "power1.out" });
 
-    // Fase 2: esplosione dei componenti + comparsa didascalie
-    tl.to("#part-cockpit", { y: -60 * explodeDist, duration: 1 }, "explode");
-    tl.to("#part-wing-left", { x: -160 * explodeDist, y: -10, duration: 1 }, "explode");
-    tl.to("#part-wing-right", { x: 160 * explodeDist, y: -10, duration: 1 }, "explode");
-    tl.to("#part-engine-left", { x: -90 * explodeDist, y: 70 * explodeDist, duration: 1 }, "explode");
-    tl.to("#part-engine-right", { x: 90 * explodeDist, y: 70 * explodeDist, duration: 1 }, "explode");
-    tl.to("#part-tail", { y: 110 * explodeDist, duration: 1 }, "explode");
+    // Fase 2: esplosione SEQUENZIALE dei componenti, un pezzo alla volta,
+    // ciascuno con la propria linea guida che si disegna mentre si muove.
+    const step = 0.55; // distanza tra un pezzo e il successivo nella timeline
 
-    tl.to(labels.cockpit, { opacity: 1, duration: 0.6 }, "explode+=0.35");
-    tl.to([labels.wingL, labels.wingR], { opacity: 1, duration: 0.6, stagger: 0.12 }, "explode+=0.5");
-    tl.to([labels.engineL, labels.engineR], { opacity: 1, duration: 0.6, stagger: 0.12 }, "explode+=0.65");
-    tl.to(labels.tail, { opacity: 1, duration: 0.6 }, "explode+=0.8");
+    tl.to("#part-tail", { y: 110 * explodeDist, duration: 0.85, ease: "power2.out" }, "p1");
+    tl.to("#guide-tail", { strokeDashoffset: 0, duration: 0.85 }, "p1");
+    tl.to(labels.tail, { opacity: 1, duration: 0.5 }, "p1+=0.35");
+
+    tl.to("#part-wing-left", { x: -160 * explodeDist, y: -10, duration: 0.85, ease: "power2.out" }, "p1+=" + step);
+    tl.to("#part-wing-right", { x: 160 * explodeDist, y: -10, duration: 0.85, ease: "power2.out" }, "p1+=" + step);
+    tl.to(["#guide-wing-l", "#guide-wing-r"], { strokeDashoffset: 0, duration: 0.85 }, "p1+=" + step);
+    tl.to([labels.wingL, labels.wingR], { opacity: 1, duration: 0.5, stagger: 0.1 }, "p1+=" + (step + 0.35));
+
+    tl.to("#part-engine-left", { x: -90 * explodeDist, y: 70 * explodeDist, duration: 0.85, ease: "power2.out" }, "p1+=" + (step * 2));
+    tl.to("#part-engine-right", { x: 90 * explodeDist, y: 70 * explodeDist, duration: 0.85, ease: "power2.out" }, "p1+=" + (step * 2));
+    tl.to(["#guide-engine-l", "#guide-engine-r"], { strokeDashoffset: 0, duration: 0.85 }, "p1+=" + (step * 2));
+    tl.to([labels.engineL, labels.engineR], { opacity: 1, duration: 0.5, stagger: 0.1 }, "p1+=" + (step * 2 + 0.35));
+
+    tl.to("#part-cockpit", { y: -60 * explodeDist, duration: 0.85, ease: "power2.out" }, "p1+=" + (step * 3));
+    tl.to("#guide-cockpit", { strokeDashoffset: 0, duration: 0.85 }, "p1+=" + (step * 3));
+    tl.to(labels.cockpit, { opacity: 1, duration: 0.5 }, "p1+=" + (step * 3 + 0.35));
 
     // Pausa di lettura
     tl.to({}, { duration: 1.4 });
 
     // Fase 3: i pezzi si ricompongono e l'aereo prosegue in quota
     tl.to(Object.values(labels), { opacity: 0, duration: 0.5, stagger: 0.05 }, "reassemble");
+    tl.to(".guides path", { strokeDashoffset: 1, duration: 0.6 }, "reassemble");
     tl.to(["#part-cockpit", "#part-wing-left", "#part-wing-right", "#part-engine-left", "#part-engine-right", "#part-tail"],
       { x: 0, y: 0, duration: 1, ease: "power2.inOut" }, "reassemble");
     tl.to("#plane-group", { y: -140, duration: 1, ease: "power1.in" }, "reassemble+=0.2");
