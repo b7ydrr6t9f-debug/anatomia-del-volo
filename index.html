@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia del Volo — un aereo, scomposto</title>
+<meta name="description" content="Un aereo sale e si scompone pezzo per pezzo mentre scorri: cabina, ali, motori, fusoliera e coda, spiegati come in un libretto tecnico.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<style>
+  :root{
+    --bg: #0A1420;
+    --bg-panel: #0E1E30;
+    --line: #5FD9CE;
+    --line-dim: #2E5C58;
+    --accent: #F2A93B;
+    --text: #EAF3F5;
+    --text-dim: #7E97A3;
+    --grid: rgba(95, 217, 206, 0.08);
+    --display: 'Space Grotesk', sans-serif;
+    --mono: 'IBM Plex Mono', monospace;
+    --body: 'IBM Plex Sans', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  html{ scroll-behavior: smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    overflow-x: hidden;
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  ::selection{ background: var(--line); color: var(--bg); }
+
+  a{ color: inherit; }
+
+  /* ---------- Topbar ---------- */
+  .topbar{
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 28px;
+    z-index: 100;
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    pointer-events: none;
+    mix-blend-mode: difference;
+  }
+  .topbar .brand{ color: var(--text); font-weight: 500; }
+  .altimeter{
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    color: var(--text);
+  }
+  .altimeter .num{
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Hero ---------- */
+  .hero{
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 0 24px;
+    overflow: hidden;
+  }
+  .hero::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 50% 100%, rgba(95,217,206,0.14), transparent 60%);
+    pointer-events: none;
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--line);
+    margin-bottom: 22px;
+  }
+  .hero h1{
+    font-family: var(--display);
+    font-weight: 700;
+    font-size: clamp(2.6rem, 7vw, 6rem);
+    line-height: 0.98;
+    letter-spacing: -0.01em;
+    max-width: 16ch;
+  }
+  .hero h1 em{
+    font-style: normal;
+    color: var(--line);
+  }
+  .hero .sub{
+    margin-top: 24px;
+    max-width: 46ch;
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    line-height: 1.6;
+  }
+  .scroll-cue{
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .scroll-cue .bar{
+    width: 1px;
+    height: 34px;
+    background: linear-gradient(var(--line), transparent);
+    animation: pulse-bar 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse-bar{
+    0%, 100% { opacity: 0.3; transform: scaleY(0.7); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  .runway{
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 120px;
+    background: linear-gradient(to top, rgba(95,217,206,0.06), transparent);
+    border-top: 1px solid var(--line-dim);
+  }
+  .runway::before{
+    content: "";
+    position: absolute;
+    top: -1px; left: 50%;
+    width: 2px; height: 100%;
+    background: repeating-linear-gradient(to bottom, var(--line-dim) 0 16px, transparent 16px 32px);
+    transform: translateX(-50%);
+    opacity: 0.5;
+  }
+
+  /* ---------- Flight stage ---------- */
+  .stage{
+    position: relative;
+    height: 600vh;
+  }
+  .stage-sticky{
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  #plane-group{ transform-origin: center center; }
+
+  .plane-svg{
+    width: min(70vw, 620px);
+    height: auto;
+    display: block;
+    overflow: visible;
+    position: relative;
+    z-index: 2;
+  }
+
+  .part path, .part rect, .part polygon, .part circle, .part ellipse{
+    stroke: var(--line);
+    stroke-width: 2;
+    fill: rgba(95, 217, 206, 0.08);
+    vector-effect: non-scaling-stroke;
+  }
+  .part.cockpit path{ fill: rgba(242, 169, 59, 0.18); stroke: var(--accent); }
+
+  .label{
+    position: absolute;
+    max-width: 240px;
+    font-family: var(--body);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--text-dim);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 3;
+  }
+  .label .tag{
+    display: block;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--line);
+    margin-bottom: 6px;
+  }
+  .label .tag::before{ content: "— "; color: var(--accent); }
+  .label strong{ color: var(--text); font-weight: 500; }
+
+  .label-cockpit{ top: 8%; left: 50%; transform: translateX(-50%); text-align: center; }
+  .label-wing-l{ top: 44%; left: 4%; }
+  .label-wing-r{ top: 44%; right: 4%; text-align: right; }
+  .label-engine-l{ bottom: 22%; left: 8%; }
+  .label-engine-r{ bottom: 22%; right: 8%; text-align: right; }
+  .label-tail{ bottom: 6%; left: 50%; transform: translateX(-50%); text-align: center; }
+
+  .stage-heading{
+    position: absolute;
+    top: 26px;
+    left: 28px;
+    z-index: 4;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    opacity: 0;
+  }
+  .stage-heading .n{ color: var(--accent); }
+
+  /* ---------- Closing ---------- */
+  .closing{
+    position: relative;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 24px;
+  }
+  .closing h2{
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(1.8rem, 4.5vw, 3.2rem);
+    max-width: 20ch;
+    line-height: 1.15;
+  }
+  .closing h2 em{ font-style: normal; color: var(--line); }
+  .closing p{
+    margin-top: 20px;
+    max-width: 48ch;
+    color: var(--text-dim);
+    font-size: 1.02rem;
+    line-height: 1.65;
+  }
+  .closing .stat-row{
+    margin-top: 56px;
+    display: flex;
+    gap: 48px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .stat{ font-family: var(--mono); }
+  .stat .v{
+    font-size: 1.6rem;
+    color: var(--accent);
+    font-weight: 600;
+    display: block;
+  }
+  .stat .l{
+    font-size: 10.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-top: 4px;
+    display: block;
+  }
+
+  footer{
+    padding: 40px 28px 60px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    border-top: 1px solid var(--line-dim);
+  }
+
+  /* ---------- Accessibility ---------- */
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    .scroll-cue .bar{ animation: none; }
+  }
+
+  @media (max-width: 720px){
+    .stage{ height: 460vh; }
+    .plane-svg{ width: 82vw; }
+    .label{ max-width: 150px; font-size: 12px; }
+    .label-wing-l, .label-wing-r{ top: 40%; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <span class="brand">Anatomia del Volo</span>
+    <span class="altimeter">ALT <span class="num" id="alt-value">00,000</span> FT</span>
+  </div>
+
+  <section class="hero">
+    <span class="eyebrow">Diagramma tecnico interattivo</span>
+    <h1>Un aereo è <em>seimila pezzi</em><br>che hanno imparato a fidarsi l'uno dell'altro.</h1>
+    <p class="sub">Scorri per farlo decollare, salire e scomporsi in volo — cabina, ali, motori, fusoliera e coda, ognuno con il proprio compito.</p>
+    <div class="scroll-cue"><span>Scorri</span><span class="bar"></span></div>
+    <div class="runway"></div>
+  </section>
+
+  <section class="stage" id="stage">
+    <div class="stage-sticky">
+      <span class="stage-heading" id="stage-heading"><span class="n">00</span> / Diagramma esploso</span>
+
+      <svg class="plane-svg" id="plane-svg" viewBox="0 0 600 760" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g id="plane-group">
+
+          <!-- TAIL: vertical fin + horizontal stabilizers -->
+          <g class="part tail" id="part-tail">
+            <path d="M300 640 L330 700 L300 730 L270 700 Z" />
+            <path d="M300 610 L360 560 L340 690 L300 660 Z" />
+            <path d="M300 610 L240 560 L260 690 L300 660 Z" />
+          </g>
+
+          <!-- ENGINES -->
+          <g class="part engine" id="part-engine-left">
+            <rect x="150" y="430" width="46" height="110" rx="20" />
+            <ellipse cx="173" cy="435" rx="23" ry="8" />
+          </g>
+          <g class="part engine" id="part-engine-right">
+            <rect x="404" y="430" width="46" height="110" rx="20" />
+            <ellipse cx="427" cy="435" rx="23" ry="8" />
+          </g>
+
+          <!-- WINGS -->
+          <g class="part wing" id="part-wing-left">
+            <path d="M300 400 L90 470 L110 500 L300 460 Z" />
+          </g>
+          <g class="part wing" id="part-wing-right">
+            <path d="M300 400 L510 470 L490 500 L300 460 Z" />
+          </g>
+
+          <!-- FUSELAGE -->
+          <g class="part fuselage" id="part-fuselage">
+            <path d="M300 60
+                     C 340 60 356 110 356 170
+                     L 356 560
+                     C 356 610 330 640 300 650
+                     C 270 640 244 610 244 560
+                     L 244 170
+                     C 244 110 260 60 300 60 Z" />
+            <line x1="270" y1="200" x2="330" y2="200" stroke-width="1" opacity="0.5" />
+            <line x1="270" y1="260" x2="330" y2="260" stroke-width="1" opacity="0.5" />
+            <line x1="270" y1="320" x2="330" y2="320" stroke-width="1" opacity="0.5" />
+            <line x1="270" y1="380" x2="330" y2="380" stroke-width="1" opacity="0.5" />
+          </g>
+
+          <!-- COCKPIT -->
+          <g class="part cockpit" id="part-cockpit">
+            <path d="M300 60 C 336 60 354 108 354 165 L 246 165 C 246 108 264 60 300 60 Z" />
+            <path d="M300 78 C 322 78 334 112 334 150 L 266 150 C 266 112 278 78 300 78 Z" stroke-width="1.4" opacity="0.7" />
+          </g>
+
+        </g>
+      </svg>
+
+      <div class="label label-cockpit" id="label-cockpit">
+        <span class="tag">Cabina di pilotaggio</span>
+        L'equipaggio legge decine di parametri al secondo. Il <strong>glass cockpit</strong> ha sostituito centinaia di strumenti meccanici con pochi schermi digitali che mostrano solo ciò che serve, quando serve.
+      </div>
+
+      <div class="label label-wing-l" id="label-wing-l">
+        <span class="tag">Ala</span>
+        Il profilo alare curva il flusso d'aria: sopra viaggia più veloce, sotto più lento. La <strong>differenza di pressione</strong> che ne risulta è ciò che tiene in aria diverse tonnellate di metallo.
+      </div>
+
+      <div class="label label-wing-r" id="label-wing-r">
+        <span class="tag">Ala</span>
+        Dentro ogni ala scorrono <strong>carburante e cavi di comando</strong>: alettoni e flap ne modificano la curvatura in tempo reale, decine di volte durante un solo decollo.
+      </div>
+
+      <div class="label label-engine-l" id="label-engine-l">
+        <span class="tag">Motore</span>
+        Un turbofan aspira oltre una tonnellata d'aria al secondo. Solo una minima parte attraversa la camera di combustione: il resto la scavalca e genera la <strong>maggior parte della spinta</strong>.
+      </div>
+
+      <div class="label label-engine-r" id="label-engine-r">
+        <span class="tag">Motore</span>
+        Le pale della ventola girano a velocità supersonica alla punta, eppure devono restare <strong>equilibrate al decimo di grammo</strong>: uno squilibrio minimo si sente in tutta la cabina.
+      </div>
+
+      <div class="label label-tail" id="label-tail">
+        <span class="tag">Coda</span>
+        Deriva e stabilizzatori non generano portanza: <strong>tengono l'aereo dritto</strong>, correggendo in automatico ogni microscostamento di rotta, anche quello che non senti mai.
+      </div>
+
+    </div>
+  </section>
+
+  <section class="closing">
+    <h2>Ogni volo è un <em>equilibrio</em> che si ripete diecimila volte al giorno.</h2>
+    <p>Nessun pezzo, da solo, vola. È l'insieme — calcolato, ridondante, testato fino allo sfinimento — a rendere ordinario qualcosa che dovrebbe sembrarci straordinario ogni volta.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="v">~6M</span><span class="l">componenti in un aereo di linea</span></div>
+      <div class="stat"><span class="v">2.400 m</span><span class="l">quota equivalente in cabina pressurizzata</span></div>
+      <div class="stat"><span class="v">38.000 ft</span><span class="l">quota di crociera tipica</span></div>
+    </div>
+  </section>
+
+  <footer>Anatomia del Volo — un esperimento interattivo</footer>
+
+<script>
+  gsap.registerPlugin(ScrollTrigger);
+
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 720px)').matches;
+
+  const altValue = document.getElementById('alt-value');
+  const stageHeading = document.getElementById('stage-heading');
+
+  const labels = {
+    cockpit: document.getElementById('label-cockpit'),
+    wingL: document.getElementById('label-wing-l'),
+    wingR: document.getElementById('label-wing-r'),
+    engineL: document.getElementById('label-engine-l'),
+    engineR: document.getElementById('label-engine-r'),
+    tail: document.getElementById('label-tail')
+  };
+
+  function formatAlt(ft){
+    return Math.max(0, Math.round(ft)).toLocaleString('it-IT').padStart(6, '0');
+  }
+
+  if (reduceMotion) {
+    // Fallback statico: nessuna esplosione legata allo scroll, solo comparsa in dissolvenza.
+    gsap.set(Object.values(labels), { opacity: 1 });
+    ScrollTrigger.create({
+      trigger: "#stage",
+      start: "top center",
+      onEnter: () => altValue.textContent = "38,000"
+    });
+  } else {
+
+    const explodeDist = isMobile ? 0.55 : 1;
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: "#stage",
+        start: "top top",
+        end: "+=500%",
+        scrub: 0.6,
+        pin: true,
+        onUpdate: (self) => {
+          altValue.textContent = formatAlt(self.progress * 38000);
+          stageHeading.style.opacity = self.progress > 0.02 && self.progress < 0.97 ? 1 : 0;
+        }
+      }
+    });
+
+    // Fase 1: l'aereo entra e sale verso il centro
+    tl.fromTo("#plane-group", { y: 260, opacity: 0.4 }, { y: 0, opacity: 1, duration: 1.1, ease: "power1.out" });
+
+    // Fase 2: esplosione dei componenti + comparsa didascalie
+    tl.to("#part-cockpit", { y: -60 * explodeDist, duration: 1 }, "explode");
+    tl.to("#part-wing-left", { x: -160 * explodeDist, y: -10, duration: 1 }, "explode");
+    tl.to("#part-wing-right", { x: 160 * explodeDist, y: -10, duration: 1 }, "explode");
+    tl.to("#part-engine-left", { x: -90 * explodeDist, y: 70 * explodeDist, duration: 1 }, "explode");
+    tl.to("#part-engine-right", { x: 90 * explodeDist, y: 70 * explodeDist, duration: 1 }, "explode");
+    tl.to("#part-tail", { y: 110 * explodeDist, duration: 1 }, "explode");
+
+    tl.to(labels.cockpit, { opacity: 1, duration: 0.6 }, "explode+=0.35");
+    tl.to([labels.wingL, labels.wingR], { opacity: 1, duration: 0.6, stagger: 0.12 }, "explode+=0.5");
+    tl.to([labels.engineL, labels.engineR], { opacity: 1, duration: 0.6, stagger: 0.12 }, "explode+=0.65");
+    tl.to(labels.tail, { opacity: 1, duration: 0.6 }, "explode+=0.8");
+
+    // Pausa di lettura
+    tl.to({}, { duration: 1.4 });
+
+    // Fase 3: i pezzi si ricompongono e l'aereo prosegue in quota
+    tl.to(Object.values(labels), { opacity: 0, duration: 0.5, stagger: 0.05 }, "reassemble");
+    tl.to(["#part-cockpit", "#part-wing-left", "#part-wing-right", "#part-engine-left", "#part-engine-right", "#part-tail"],
+      { x: 0, y: 0, duration: 1, ease: "power2.inOut" }, "reassemble");
+    tl.to("#plane-group", { y: -140, duration: 1, ease: "power1.in" }, "reassemble+=0.2");
+  }
+
+  // Numero di step nell'intestazione dello stage, puramente informativo
+  let stepCount = 0;
+  ScrollTrigger.create({
+    trigger: "#stage",
+    start: "top top",
+    end: "+=500%",
+    onUpdate: self => {
+      const step = Math.min(6, Math.floor(self.progress * 7));
+      stageHeading.querySelector('.n').textContent = String(step).padStart(2, '0');
+    }
+  });
+</script>
+
+</body>
+</html>
