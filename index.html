@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anatomia del Volo — un aereo, scomposto</title>
-<meta name="description" content="Un aereo sale e si scompone pezzo per pezzo mentre scorri: cabina, ali, motori, fusoliera e coda, spiegati come in un libretto tecnico.">
+<title>Anatomia del Volo — un Piaggio P180, spiegato pezzo per pezzo</title>
+<meta name="description" content="Un aereo a tre superfici portanti, isolato componente per componente mentre scorri: canard, ala, motori a elica spingente, fusoliera e coda a T.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
@@ -175,8 +175,6 @@
     overflow: hidden;
   }
 
-  #plane-group{ transform-origin: center center; }
-
   .plane-svg{
     width: min(70vw, 620px);
     height: auto;
@@ -190,16 +188,26 @@
     vector-effect: non-scaling-stroke;
   }
 
+  .spot-part{ transform-origin: center center; }
+
+  .spot-labels{
+    position: absolute;
+    bottom: 14%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(90vw, 420px);
+    text-align: center;
+    z-index: 3;
+    pointer-events: none;
+  }
   .label{
     position: absolute;
-    max-width: 240px;
+    inset: 0;
     font-family: var(--body);
-    font-size: 13.5px;
-    line-height: 1.55;
+    font-size: 14.5px;
+    line-height: 1.6;
     color: var(--text-dim);
     opacity: 0;
-    pointer-events: none;
-    z-index: 3;
   }
   .label .tag{
     display: block;
@@ -208,17 +216,29 @@
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--line);
-    margin-bottom: 6px;
+    margin-bottom: 8px;
   }
-  .label .tag::before{ content: "— "; color: var(--accent); }
   .label strong{ color: var(--text); font-weight: 500; }
 
-  .label-cockpit{ top: 8%; left: 50%; transform: translateX(-50%); text-align: center; }
-  .label-wing-l{ top: 44%; left: 4%; }
-  .label-wing-r{ top: 44%; right: 4%; text-align: right; }
-  .label-engine-l{ bottom: 22%; left: 8%; }
-  .label-engine-r{ bottom: 22%; right: 8%; text-align: right; }
-  .label-tail{ bottom: 6%; left: 50%; transform: translateX(-50%); text-align: center; }
+  .step-dots{
+    position: absolute;
+    bottom: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 4;
+  }
+  .step-dots .dot{
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--line-dim);
+    transition: background 0.3s, transform 0.3s;
+  }
+  .step-dots .dot.active{
+    background: var(--accent);
+    transform: scale(1.4);
+  }
 
   .stage-heading{
     position: absolute;
@@ -306,10 +326,10 @@
   }
 
   @media (max-width: 720px){
-    .stage{ height: 300vh; }
-    .plane-svg{ width: 82vw; }
-    .label{ max-width: 150px; font-size: 12px; }
-    .label-wing-l, .label-wing-r{ top: 40%; }
+    .stage{ height: 260vh; }
+    .plane-svg{ width: 84vw; }
+    .spot-labels{ bottom: 16%; width: 88vw; }
+    .label{ font-size: 13px; }
   }
 </style>
 </head>
@@ -322,17 +342,17 @@
 
   <section class="hero">
     <span class="eyebrow">Diagramma tecnico interattivo</span>
-    <h1>Un aereo è <em>seimila pezzi</em><br>che hanno imparato a fidarsi l'uno dell'altro.</h1>
-    <p class="sub">Scorri per farlo decollare, salire e scomporsi in volo — cabina, ali, motori, fusoliera e coda, ognuno con il proprio compito.</p>
+    <h1>Tre superfici portanti, <em>un solo equilibrio</em>.</h1>
+    <p class="sub">Ispirato al Piaggio P180 Avanti — canard, ala arretrata, motori a elica spingente, coda a T. Scorri per isolarli uno per uno.</p>
     <div class="scroll-cue"><span>Scorri</span><span class="bar"></span></div>
     <div class="runway"></div>
   </section>
 
   <section class="stage" id="stage">
     <div class="stage-sticky">
-      <span class="stage-heading" id="stage-heading"><span class="n">00</span> / Diagramma esploso</span>
+      <span class="stage-heading" id="stage-heading"><span class="n">00</span> / 06 — Componente isolato</span>
 
-      <svg class="plane-svg" id="plane-svg" viewBox="0 0 600 780" xmlns="http://www.w3.org/2000/svg">
+      <svg class="plane-svg" id="plane-svg" viewBox="0 0 700 700" xmlns="http://www.w3.org/2000/svg">
         <defs>
           <linearGradient id="gradFuselage" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#7d8a92" />
@@ -360,262 +380,238 @@
             <stop offset="100%" stop-color="#193640" />
           </linearGradient>
           <filter id="dropShadow" x="-60%" y="-60%" width="220%" height="220%">
-            <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.55"/>
+            <feDropShadow dx="0" dy="12" stdDeviation="12" flood-color="#000000" flood-opacity="0.5"/>
           </filter>
-          <clipPath id="fuselageClip">
-            <path d="M300 58
-                     C 344 58 362 112 362 172
-                     L 362 560
-                     C 362 614 332 646 300 656
-                     C 268 646 238 614 238 560
-                     L 238 172
-                     C 238 112 256 58 300 58 Z" />
-          </clipPath>
         </defs>
 
-        <!-- LINEE GUIDA: tratteggiate, si disegnano mentre ogni pezzo si separa -->
-        <g class="guides" stroke="#5FD9CE" stroke-width="1.5" stroke-dasharray="1" fill="none" opacity="0.55">
-          <path id="guide-tail" pathLength="1" d="M300 610 L300 720" />
-          <path id="guide-wing-l" pathLength="1" d="M296 420 L140 420" />
-          <path id="guide-wing-r" pathLength="1" d="M304 420 L460 420" />
-          <path id="guide-engine-l" pathLength="1" d="M186 470 L96 540" />
-          <path id="guide-engine-r" pathLength="1" d="M414 470 L504 540" />
-          <path id="guide-cockpit" pathLength="1" d="M300 100 L300 30" />
+        <!-- SAGOMA FANTASMA: profilo completo del P180 sempre presente, molto
+             tenue, per dare contesto a ogni pezzo isolato -->
+        <g id="ghost" fill="none" stroke="#5FD9CE" stroke-width="1.4" opacity="0.11">
+          <path d="M350 90 C 372 90 386 150 388 230 L390 430 C 390 470 380 500 350 520 C 320 500 310 470 310 430 L312 230 C 314 150 328 90 350 90 Z" />
+          <path d="M350 190 L300 235 L318 250 L350 220 Z" />
+          <path d="M350 190 L400 235 L382 250 L350 220 Z" />
+          <path d="M350 400 L140 460 L158 490 L350 450 Z" />
+          <path d="M350 400 L560 460 L542 490 L350 450 Z" />
+          <path d="M300 470 L246 500 L262 528 L316 496 Z" />
+          <path d="M400 470 L454 500 L438 528 L384 496 Z" />
+          <path d="M350 500 L350 590" />
+          <path d="M350 560 L300 600 L350 610 L400 600 Z" />
         </g>
 
-        <g id="plane-group">
+        <!-- 1. COCKPIT -->
+        <g class="spot-part" id="part-cockpit" filter="url(#dropShadow)">
+          <path d="M350 120 C 386 150 404 230 406 320 L 294 320 C 296 230 314 150 350 120 Z"
+                fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="2" />
+          <path d="M350 150 C 372 172 384 220 386 260 L 314 260 C 316 220 328 172 350 150 Z"
+                fill="url(#gradCockpitGlass)" stroke="#0d1c22" stroke-width="1.5" />
+          <line x1="350" y1="150" x2="350" y2="260" stroke="#0d1c22" stroke-width="1.5" />
+          <path d="M350 120 C 362 120 372 138 378 162 L 322 162 C 328 138 338 120 350 120 Z" fill="#2b3236" opacity="0.85" />
+        </g>
 
-          <!-- TAIL -->
-          <g class="part tail" id="part-tail" filter="url(#dropShadow)">
-            <path d="M300 630 L332 700 L300 732 L268 700 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
-            <path d="M300 600 L366 548 L344 686 L300 654 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
-            <path d="M300 600 L234 548 L256 686 L300 654 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
-            <path d="M300 630 L322 682 L300 700 L300 630 Z" fill="#EEA83B" opacity="0.9" />
+        <!-- 2. CANARD -->
+        <g class="spot-part" id="part-canard" filter="url(#dropShadow)">
+          <path d="M350 300 L200 372 L226 400 L350 344 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <path d="M350 300 L500 372 L474 400 L350 344 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <path d="M350 316 L260 358 L272 372 L350 336 Z" fill="#ffffff" opacity="0.16" />
+          <path d="M350 316 L440 358 L428 372 L350 336 Z" fill="#ffffff" opacity="0.16" />
+          <rect x="332" y="292" width="36" height="30" rx="8" fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="1.5" />
+        </g>
+
+        <!-- 3. FUSOLIERA / CABINA -->
+        <g class="spot-part" id="part-fuselage" filter="url(#dropShadow)">
+          <path d="M350 130 C 380 130 396 200 396 300 L 396 470 C 396 540 378 580 350 596
+                   C 322 580 304 540 304 470 L 304 300 C 304 200 320 130 350 130 Z"
+                fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="2" />
+          <rect x="322" y="510" width="56" height="16" fill="#EEA83B" />
+          <rect x="322" y="526" width="56" height="4" fill="#5FD9CE" opacity="0.8" />
+          <g fill="#0c1a22" stroke="#1f2f36" stroke-width="0.7">
+            <circle cx="326" cy="250" r="7" /><circle cx="326" cy="278" r="7" /><circle cx="326" cy="306" r="7" />
+            <circle cx="326" cy="334" r="7" /><circle cx="326" cy="362" r="7" /><circle cx="326" cy="390" r="7" />
+            <circle cx="326" cy="418" r="7" /><circle cx="326" cy="446" r="7" />
+            <circle cx="374" cy="250" r="7" /><circle cx="374" cy="278" r="7" /><circle cx="374" cy="306" r="7" />
+            <circle cx="374" cy="334" r="7" /><circle cx="374" cy="362" r="7" /><circle cx="374" cy="390" r="7" />
+            <circle cx="374" cy="418" r="7" /><circle cx="374" cy="446" r="7" />
           </g>
+        </g>
 
-          <!-- ENGINES -->
-          <g class="part engine" id="part-engine-left" filter="url(#dropShadow)">
-            <rect x="146" y="428" width="52" height="116" rx="24" fill="url(#gradEngine)" stroke="#20262a" stroke-width="1.5" />
-            <ellipse cx="172" cy="434" rx="26" ry="9" fill="url(#gradInlet)" />
-            <circle cx="172" cy="434" r="3" fill="#5FD9CE" opacity="0.7" />
-            <rect x="152" y="530" width="40" height="8" rx="4" fill="#20262a" opacity="0.8" />
-          </g>
-          <g class="part engine" id="part-engine-right" filter="url(#dropShadow)">
-            <rect x="402" y="428" width="52" height="116" rx="24" fill="url(#gradEngine)" stroke="#20262a" stroke-width="1.5" />
-            <ellipse cx="428" cy="434" rx="26" ry="9" fill="url(#gradInlet)" />
-            <circle cx="428" cy="434" r="3" fill="#5FD9CE" opacity="0.7" />
-            <rect x="408" y="530" width="40" height="8" rx="4" fill="#20262a" opacity="0.8" />
-          </g>
+        <!-- 4. ALA PRINCIPALE (arretrata) -->
+        <g class="spot-part" id="part-wing" filter="url(#dropShadow)">
+          <path d="M350 260 L120 350 L146 392 L350 320 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <path d="M350 260 L580 350 L554 392 L350 320 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <path d="M350 288 L200 344 L212 362 L350 314 Z" fill="#ffffff" opacity="0.16" />
+          <path d="M350 288 L500 344 L488 362 L350 314 Z" fill="#ffffff" opacity="0.16" />
+          <circle cx="190" cy="368" r="3.5" fill="#EEA83B" />
+          <circle cx="510" cy="368" r="3.5" fill="#EEA83B" />
+        </g>
 
-          <!-- WINGS -->
-          <g class="part wing" id="part-wing-left" filter="url(#dropShadow)">
-            <path d="M300 396 L82 468 L104 502 L300 458 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
-            <path d="M300 420 L140 468 L150 480 L300 442 Z" fill="#ffffff" opacity="0.18" />
-            <circle cx="150" cy="466" r="2.5" fill="#EEA83B" />
-          </g>
-          <g class="part wing" id="part-wing-right" filter="url(#dropShadow)">
-            <path d="M300 396 L518 468 L496 502 L300 458 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="1.5" />
-            <path d="M300 420 L460 468 L450 480 L300 442 Z" fill="#ffffff" opacity="0.18" />
-            <circle cx="450" cy="466" r="2.5" fill="#EEA83B" />
-          </g>
-
-          <!-- FUSELAGE -->
-          <g class="part fuselage" id="part-fuselage" filter="url(#dropShadow)">
-            <path d="M300 58
-                     C 344 58 362 112 362 172
-                     L 362 560
-                     C 362 614 332 646 300 656
-                     C 268 646 238 614 238 560
-                     L 238 172
-                     C 238 112 256 58 300 58 Z"
-                  fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="1.5" />
-
-            <!-- livrea -->
-            <rect x="238" y="470" width="124" height="20" clip-path="url(#fuselageClip)" fill="#EEA83B" />
-            <rect x="238" y="490" width="124" height="4" clip-path="url(#fuselageClip)" fill="#5FD9CE" opacity="0.8" />
-
-            <!-- finestrini cabina -->
-            <g fill="#0c1a22" stroke="#1f2f36" stroke-width="0.6">
-              <rect x="266" y="200" width="14" height="10" rx="4" />
-              <rect x="266" y="222" width="14" height="10" rx="4" />
-              <rect x="266" y="244" width="14" height="10" rx="4" />
-              <rect x="266" y="266" width="14" height="10" rx="4" />
-              <rect x="266" y="288" width="14" height="10" rx="4" />
-              <rect x="266" y="310" width="14" height="10" rx="4" />
-              <rect x="266" y="332" width="14" height="10" rx="4" />
-              <rect x="266" y="354" width="14" height="10" rx="4" />
-              <rect x="266" y="376" width="14" height="10" rx="4" />
-              <rect x="320" y="200" width="14" height="10" rx="4" />
-              <rect x="320" y="222" width="14" height="10" rx="4" />
-              <rect x="320" y="244" width="14" height="10" rx="4" />
-              <rect x="320" y="266" width="14" height="10" rx="4" />
-              <rect x="320" y="288" width="14" height="10" rx="4" />
-              <rect x="320" y="310" width="14" height="10" rx="4" />
-              <rect x="320" y="332" width="14" height="10" rx="4" />
-              <rect x="320" y="354" width="14" height="10" rx="4" />
-              <rect x="320" y="376" width="14" height="10" rx="4" />
+        <!-- 5. MOTORI A ELICA SPINGENTE -->
+        <g class="spot-part" id="part-engine" filter="url(#dropShadow)">
+          <g id="engine-left">
+            <rect x="230" y="300" width="118" height="52" rx="24" fill="url(#gradEngine)" stroke="#20262a" stroke-width="2" />
+            <circle cx="230" cy="326" r="30" fill="url(#gradInlet)" />
+            <g id="prop-left" stroke="#c9d2d6" stroke-width="4" stroke-linecap="round">
+              <line x1="230" y1="326" x2="230" y2="284" />
+              <line x1="230" y1="326" x2="266" y2="348" />
+              <line x1="230" y1="326" x2="194" y2="348" />
             </g>
-
-            <!-- radome -->
-            <path d="M300 58 C 316 58 328 76 332 98 L 268 98 C 272 76 284 58 300 58 Z" fill="#2b3236" opacity="0.85" />
+            <circle cx="230" cy="326" r="6" fill="#0b0d0f" />
           </g>
-
-          <!-- COCKPIT -->
-          <g class="part cockpit" id="part-cockpit" filter="url(#dropShadow)">
-            <path d="M300 96 C 332 96 350 132 352 168 L 248 168 C 250 132 268 96 300 96 Z"
-                  fill="url(#gradFuselage)" stroke="#3a4247" stroke-width="1.5" />
-            <path d="M300 108 C 322 108 336 134 338 158 L 262 158 C 264 134 278 108 300 108 Z"
-                  fill="url(#gradCockpitGlass)" stroke="#0d1c22" stroke-width="1" />
-            <line x1="300" y1="108" x2="300" y2="158" stroke="#0d1c22" stroke-width="1" />
+          <g id="engine-right">
+            <rect x="352" y="300" width="118" height="52" rx="24" fill="url(#gradEngine)" stroke="#20262a" stroke-width="2" />
+            <circle cx="470" cy="326" r="30" fill="url(#gradInlet)" />
+            <g id="prop-right" stroke="#c9d2d6" stroke-width="4" stroke-linecap="round">
+              <line x1="470" y1="326" x2="470" y2="284" />
+              <line x1="470" y1="326" x2="506" y2="348" />
+              <line x1="470" y1="326" x2="434" y2="348" />
+            </g>
+            <circle cx="470" cy="326" r="6" fill="#0b0d0f" />
           </g>
-
         </g>
+
+        <!-- 6. CODA A T -->
+        <g class="spot-part" id="part-tail" filter="url(#dropShadow)">
+          <path d="M350 240 L326 420 L374 420 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <path d="M326 240 L228 260 L246 296 L336 268 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <path d="M374 240 L472 260 L454 296 L364 268 Z" fill="url(#gradWing)" stroke="#2a3236" stroke-width="2" />
+          <rect x="336" y="410" width="28" height="16" rx="4" fill="#EEA83B" />
+        </g>
+
       </svg>
 
-      <div class="label label-cockpit" id="label-cockpit">
-        <span class="tag">Cabina di pilotaggio</span>
-        L'equipaggio legge decine di parametri al secondo. Il <strong>glass cockpit</strong> ha sostituito centinaia di strumenti meccanici con pochi schermi digitali che mostrano solo ciò che serve, quando serve.
+      <div class="spot-labels">
+        <div class="label" id="label-cockpit">
+          <span class="tag">01 — Cabina di pilotaggio</span>
+          Abitacolo pressurizzato con strumentazione digitale: gestisce in tempo reale l'assetto di <strong>tre superfici portanti indipendenti</strong>, non solo due come su un aereo convenzionale.
+        </div>
+        <div class="label" id="label-canard">
+          <span class="tag">02 — Canard</span>
+          Il piccolo profilo alare vicino al muso non è decorativo: <strong>genera portanza anch'esso</strong>, alleggerendo il carico sull'ala principale e liberando spazio in cabina senza spostare il baricentro.
+        </div>
+        <div class="label" id="label-fuselage">
+          <span class="tag">03 — Fusoliera</span>
+          La sezione a goccia riduce la resistenza aerodinamica mantenendo <strong>uno spazio interno insolitamente ampio</strong> per un bimotore di queste dimensioni.
+        </div>
+        <div class="label" id="label-wing">
+          <span class="tag">04 — Ala principale</span>
+          Montata quasi in coda, vicino ai motori: lavora insieme al canard per <strong>distribuire il peso su tre punti</strong> anziché due, cambiando tutto l'equilibrio del velivolo.
+        </div>
+        <div class="label" id="label-engine">
+          <span class="tag">05 — Motori a elica spingente</span>
+          Le eliche spingono anziché tirare: montate dietro l'ala, mandano la scia turbolenta lontano dalla cabina, con <strong>vibrazioni e rumore molto più bassi</strong> di un turboelica tradizionale.
+        </div>
+        <div class="label" id="label-tail">
+          <span class="tag">06 — Coda a T</span>
+          Lo stabilizzatore orizzontale è montato in cima alla deriva, <strong>fuori dalla scia delle eliche posteriori</strong>, dove l'aria è pulita e i comandi rispondono con precisione.
+        </div>
       </div>
 
-      <div class="label label-wing-l" id="label-wing-l">
-        <span class="tag">Ala</span>
-        Il profilo alare curva il flusso d'aria: sopra viaggia più veloce, sotto più lento. La <strong>differenza di pressione</strong> che ne risulta è ciò che tiene in aria diverse tonnellate di metallo.
-      </div>
-
-      <div class="label label-wing-r" id="label-wing-r">
-        <span class="tag">Ala</span>
-        Dentro ogni ala scorrono <strong>carburante e cavi di comando</strong>: alettoni e flap ne modificano la curvatura in tempo reale, decine di volte durante un solo decollo.
-      </div>
-
-      <div class="label label-engine-l" id="label-engine-l">
-        <span class="tag">Motore</span>
-        Un turbofan aspira oltre una tonnellata d'aria al secondo. Solo una minima parte attraversa la camera di combustione: il resto la scavalca e genera la <strong>maggior parte della spinta</strong>.
-      </div>
-
-      <div class="label label-engine-r" id="label-engine-r">
-        <span class="tag">Motore</span>
-        Le pale della ventola girano a velocità supersonica alla punta, eppure devono restare <strong>equilibrate al decimo di grammo</strong>: uno squilibrio minimo si sente in tutta la cabina.
-      </div>
-
-      <div class="label label-tail" id="label-tail">
-        <span class="tag">Coda</span>
-        Deriva e stabilizzatori non generano portanza: <strong>tengono l'aereo dritto</strong>, correggendo in automatico ogni microscostamento di rotta, anche quello che non senti mai.
+      <div class="step-dots" id="step-dots">
+        <span class="dot active"></span><span class="dot"></span><span class="dot"></span>
+        <span class="dot"></span><span class="dot"></span><span class="dot"></span>
       </div>
 
     </div>
   </section>
 
+
   <section class="closing">
-    <h2>Ogni volo è un <em>equilibrio</em> che si ripete diecimila volte al giorno.</h2>
-    <p>Nessun pezzo, da solo, vola. È l'insieme — calcolato, ridondante, testato fino allo sfinimento — a rendere ordinario qualcosa che dovrebbe sembrarci straordinario ogni volta.</p>
+    <h2>Tre superfici, <em>un solo equilibrio</em> che si ripete a ogni volo.</h2>
+    <p>Canard, ala e coda lavorano insieme, non in sequenza: è la combinazione delle tre a distribuire il peso in modo che nessuna faccia da sola tutto il lavoro.</p>
     <div class="stat-row">
-      <div class="stat"><span class="v">~6M</span><span class="l">componenti in un aereo di linea</span></div>
+      <div class="stat"><span class="v">3</span><span class="l">superfici portanti indipendenti</span></div>
       <div class="stat"><span class="v">2.400 m</span><span class="l">quota equivalente in cabina pressurizzata</span></div>
       <div class="stat"><span class="v">38.000 ft</span><span class="l">quota di crociera tipica</span></div>
     </div>
   </section>
 
-  <footer>Anatomia del Volo — un esperimento interattivo</footer>
+  <footer>Anatomia del Volo — illustrazione vettoriale originale ispirata al Piaggio P180 Avanti, non un'immagine ufficiale del produttore</footer>
 
 <script>
   gsap.registerPlugin(ScrollTrigger);
 
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const isMobile = window.matchMedia('(max-width: 720px)').matches;
 
   const altValue = document.getElementById('alt-value');
   const stageHeading = document.getElementById('stage-heading');
+  const dots = document.querySelectorAll('.step-dots .dot');
 
-  const labels = {
-    cockpit: document.getElementById('label-cockpit'),
-    wingL: document.getElementById('label-wing-l'),
-    wingR: document.getElementById('label-wing-r'),
-    engineL: document.getElementById('label-engine-l'),
-    engineR: document.getElementById('label-engine-r'),
-    tail: document.getElementById('label-tail')
-  };
+  const partIds = ['part-cockpit', 'part-canard', 'part-fuselage', 'part-wing', 'part-engine', 'part-tail'];
+  const labelIds = ['label-cockpit', 'label-canard', 'label-fuselage', 'label-wing', 'label-engine', 'label-tail'];
+  const parts = partIds.map(id => document.getElementById(id));
+  const labels = labelIds.map(id => document.getElementById(id));
 
   function formatAlt(ft){
     return Math.max(0, Math.round(ft)).toLocaleString('it-IT').padStart(6, '0');
   }
 
+  function setActiveDot(index){
+    dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    stageHeading.querySelector('.n').textContent = String(index + 1).padStart(2, '0');
+  }
+
   if (reduceMotion) {
-    // Fallback statico: nessuna esplosione legata allo scroll, solo comparsa in dissolvenza.
-    gsap.set(Object.values(labels), { opacity: 1 });
-    ScrollTrigger.create({
-      trigger: "#stage",
-      start: "top center",
-      onEnter: () => altValue.textContent = "38,000"
-    });
+    // Fallback statico: nessuna animazione legata allo scroll, tutti i pezzi
+    // e le didascalie visibili insieme per chi preferisce meno movimento.
+    gsap.set(parts, { opacity: 1, y: 0 });
+    gsap.set(labels, { opacity: 1, position: 'static', marginBottom: '16px' });
+    altValue.textContent = "38,000";
+    setActiveDot(5);
   } else {
 
-    const explodeDist = isMobile ? 0.55 : 1;
+    // Stato iniziale: solo il primo pezzo (cabina di pilotaggio) visibile.
+    gsap.set(parts[0], { opacity: 1, y: 0 });
+    gsap.set(parts.slice(1), { opacity: 0, y: 50 });
+    gsap.set(labels[0], { opacity: 1 });
+    gsap.set(labels.slice(1), { opacity: 0 });
 
     const tl = gsap.timeline({
       scrollTrigger: {
         trigger: "#stage",
         start: "top top",
-        end: "+=320%",
+        end: "+=340%",
         scrub: 0.35,
         pin: true,
         onUpdate: (self) => {
           altValue.textContent = formatAlt(self.progress * 38000);
-          stageHeading.style.opacity = self.progress > 0.02 && self.progress < 0.97 ? 1 : 0;
+          const idx = Math.min(5, Math.floor(self.progress * 6));
+          setActiveDot(idx);
         }
       }
     });
 
-    // Le linee guida partono "chiuse" (dashoffset 1 = invisibili) e si disegnano
-    // in sincrono con il pezzo a cui appartengono.
-    gsap.set(".guides path", { strokeDashoffset: 1 });
+    // Sequenza: per ognuno dei 6 pezzi, il precedente esce verso l'alto
+    // sfumando, il successivo entra dal basso sfumando. Un solo pezzo
+    // visibile alla volta, mai in sovrapposizione con gli altri.
+    for (let i = 1; i < parts.length; i++) {
+      const label = "step" + i;
+      tl.to(parts[i - 1], { opacity: 0, y: -50, duration: 0.5, ease: "power1.in" }, label);
+      tl.to(labels[i - 1], { opacity: 0, duration: 0.3 }, label);
+      tl.to(parts[i], { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" }, label + "+=0.15");
+      tl.to(labels[i], { opacity: 1, duration: 0.4 }, label + "+=0.35");
+      tl.to({}, { duration: 0.35 }); // pausa di lettura tra un pezzo e l'altro
+    }
 
-    // Fase 1: l'aereo entra e sale verso il centro
-    tl.fromTo("#plane-group", { y: 260, opacity: 0.4 }, { y: 0, opacity: 1, duration: 1.1, ease: "power1.out" });
-
-    // Fase 2: esplosione SEQUENZIALE dei componenti, un pezzo alla volta,
-    // ciascuno con la propria linea guida che si disegna mentre si muove.
-    const step = 0.35; // distanza tra un pezzo e il successivo nella timeline
-
-    tl.to("#part-tail", { y: 110 * explodeDist, duration: 0.5, ease: "power2.out" }, "p1");
-    tl.to("#guide-tail", { strokeDashoffset: 0, duration: 0.5 }, "p1");
-    tl.to(labels.tail, { opacity: 1, duration: 0.35 }, "p1+=0.2");
-
-    tl.to("#part-wing-left", { x: -160 * explodeDist, y: -10, duration: 0.5, ease: "power2.out" }, "p1+=" + step);
-    tl.to("#part-wing-right", { x: 160 * explodeDist, y: -10, duration: 0.5, ease: "power2.out" }, "p1+=" + step);
-    tl.to(["#guide-wing-l", "#guide-wing-r"], { strokeDashoffset: 0, duration: 0.5 }, "p1+=" + step);
-    tl.to([labels.wingL, labels.wingR], { opacity: 1, duration: 0.35, stagger: 0.06 }, "p1+=" + (step + 0.2));
-
-    tl.to("#part-engine-left", { x: -90 * explodeDist, y: 70 * explodeDist, duration: 0.5, ease: "power2.out" }, "p1+=" + (step * 2));
-    tl.to("#part-engine-right", { x: 90 * explodeDist, y: 70 * explodeDist, duration: 0.5, ease: "power2.out" }, "p1+=" + (step * 2));
-    tl.to(["#guide-engine-l", "#guide-engine-r"], { strokeDashoffset: 0, duration: 0.5 }, "p1+=" + (step * 2));
-    tl.to([labels.engineL, labels.engineR], { opacity: 1, duration: 0.35, stagger: 0.06 }, "p1+=" + (step * 2 + 0.2));
-
-    tl.to("#part-cockpit", { y: -60 * explodeDist, duration: 0.5, ease: "power2.out" }, "p1+=" + (step * 3));
-    tl.to("#guide-cockpit", { strokeDashoffset: 0, duration: 0.5 }, "p1+=" + (step * 3));
-    tl.to(labels.cockpit, { opacity: 1, duration: 0.35 }, "p1+=" + (step * 3 + 0.2));
-
-    // Pausa di lettura
-    tl.to({}, { duration: 0.7 });
-
-    // Fase 3: i pezzi si ricompongono e l'aereo prosegue in quota
-    tl.to(Object.values(labels), { opacity: 0, duration: 0.5, stagger: 0.05 }, "reassemble");
-    tl.to(".guides path", { strokeDashoffset: 1, duration: 0.6 }, "reassemble");
-    tl.to(["#part-cockpit", "#part-wing-left", "#part-wing-right", "#part-engine-left", "#part-engine-right", "#part-tail"],
-      { x: 0, y: 0, duration: 1, ease: "power2.inOut" }, "reassemble");
-    tl.to("#plane-group", { y: -140, duration: 1, ease: "power1.in" }, "reassemble+=0.2");
+    tl.to({}, { duration: 0.5 }); // pausa finale sull'ultimo pezzo (coda)
   }
 
-  // Numero di step nell'intestazione dello stage, puramente informativo
-  let stepCount = 0;
-  ScrollTrigger.create({
-    trigger: "#stage",
-    start: "top top",
-    end: "+=320%",
-    onUpdate: self => {
-      const step = Math.min(6, Math.floor(self.progress * 7));
-      stageHeading.querySelector('.n').textContent = String(step).padStart(2, '0');
-    }
-  });
+  // Le eliche dei motori girano quando quel pezzo è in vista, si fermano altrimenti.
+  const propLeft = document.getElementById('prop-left');
+  const propRight = document.getElementById('prop-right');
+  if (!reduceMotion && propLeft && propRight) {
+    const spin = gsap.to([propLeft, propRight], {
+      rotation: 360,
+      transformOrigin: "center center",
+      duration: 0.6,
+      repeat: -1,
+      ease: "none",
+      paused: true
+    });
+    gsap.ticker.add(() => {
+      const op = gsap.getProperty("#part-engine", "opacity");
+      if (op > 0.5 && spin.paused()) spin.play();
+      if (op <= 0.5 && !spin.paused()) spin.pause();
+    });
+  }
 </script>
 
 </body>
